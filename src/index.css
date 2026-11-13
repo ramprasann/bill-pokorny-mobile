@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+html, body, #root {
+  min-height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #f4f7fb;
+  font-family: 'Source Sans 3', system-ui, -apple-system, sans-serif;
+  color: #0f2340;
+}
+
+/* Hide scrollbars where specified */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Native touch feel for the mobile frame body */
+.native-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* Active press animation */
+.tap-press {
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.tap-press:active {
+  transform: scale(0.97);
+  opacity: 0.88;
+}
+
+.font-mono-specs {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.font-display {
+  font-family: 'Barlow Condensed', sans-serif;
+}

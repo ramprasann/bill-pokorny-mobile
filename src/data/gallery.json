@@ -1,0 +1,74 @@
+[
+  {
+    "id": "gal-1",
+    "category": "fixtures",
+    "alt": "Kitchen faucet with filtered-water tap",
+    "src": "/images/gallery-1-fixtures.jpg"
+  },
+  {
+    "id": "gal-2",
+    "category": "tanks",
+    "alt": "Twin pressure tanks with booster",
+    "src": "/images/gallery-2-tanks.jpg"
+  },
+  {
+    "id": "gal-3",
+    "category": "tanks",
+    "alt": "Pressure tank installation",
+    "src": "/images/gallery-3-tanks.jpg"
+  },
+  {
+    "id": "gal-4",
+    "category": "tanks",
+    "alt": "Well tank with pressure switch",
+    "src": "/images/gallery-4-tanks.jpg"
+  },
+  {
+    "id": "gal-5",
+    "category": "fixtures",
+    "alt": "Outdoor shower on stone wall",
+    "src": "/images/gallery-5-fixtures.jpg"
+  },
+  {
+    "id": "gal-6",
+    "category": "tanks",
+    "alt": "Expansion tank on copper line",
+    "src": "/images/gallery-6-tanks.jpg"
+  },
+  {
+    "id": "gal-7",
+    "category": "pumps",
+    "alt": "Constant-pressure booster pump",
+    "src": "/images/gallery-7-pumps.jpg"
+  },
+  {
+    "id": "gal-8",
+    "category": "fixtures",
+    "alt": "Matte black kitchen faucet",
+    "src": "/images/gallery-8-fixtures.jpg"
+  },
+  {
+    "id": "gal-9",
+    "category": "fixtures",
+    "alt": "Pull-down kitchen faucet",
+    "src": "/images/gallery-9-fixtures.jpg"
+  },
+  {
+    "id": "gal-10",
+    "category": "heaters",
+    "alt": "Indirect water heater and boiler",
+    "src": "/images/gallery-10-heaters.jpg"
+  },
+  {
+    "id": "gal-11",
+    "category": "fixtures",
+    "alt": "Widespread bathroom faucet",
+    "src": "/images/gallery-11-fixtures.jpg"
+  },
+  {
+    "id": "gal-12",
+    "category": "filtration",
+    "alt": "Water softener and brine tank",
+    "src": "/images/gallery-12-filtration.jpg"
+  }
+]
