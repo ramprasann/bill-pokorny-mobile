@@ -19,7 +19,8 @@ import {
   Camera,
   MapPin,
   X,
-  Plus
+  Plus,
+  ArrowLeft
 } from "lucide-react"
 import { UserWellSystem, WaterQualityLog } from "@/types/system"
 import { ServiceReport, initialReports } from "@/types/reports"
@@ -83,7 +84,10 @@ export const MyWellScreen: React.FC<MyWellScreenProps> = ({
       {/* 3-Way Top Navigation Segment */}
       <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-200/80 p-1 shadow-inner border border-slate-300/50">
         <button
-          onClick={() => setActiveTab("equipment")}
+          onClick={() => {
+            setSelectedReport(null)
+            setActiveTab("equipment")
+          }}
           className={`py-2 px-1 rounded-lg text-xs font-semibold tracking-tight transition-all flex items-center justify-center gap-1 min-w-0 ${
             activeTab === "equipment"
               ? "bg-white text-[#0f2340] shadow-sm"
@@ -95,7 +99,10 @@ export const MyWellScreen: React.FC<MyWellScreenProps> = ({
         </button>
 
         <button
-          onClick={() => setActiveTab("reminders")}
+          onClick={() => {
+            setSelectedReport(null)
+            setActiveTab("reminders")
+          }}
           className={`py-2 px-1 rounded-lg text-xs font-semibold tracking-tight transition-all flex items-center justify-center gap-1 min-w-0 ${
             activeTab === "reminders"
               ? "bg-white text-[#0f2340] shadow-sm"
@@ -422,197 +429,207 @@ export const MyWellScreen: React.FC<MyWellScreenProps> = ({
       {/* SUB-TAB 3: REPORTS */}
       {activeTab === "reports" && (
         <div className="space-y-3">
-          {/* Search Bar */}
-          <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search past repairs, installed parts, or dates..."
-              value={reportSearch}
-              onChange={e => setReportSearch(e.target.value)}
-              className="w-full text-xs pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2f74b5]"
-            />
-          </div>
-
-          {/* Filter Chips */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-            {["All", "Replace", "Repair", "Install", "Maintenance"].map(cat => (
+          {selectedReport ? (
+            /* IN-FRAME FULL SERVICE REPORT DETAIL VIEW */
+            <div className="space-y-3 animate-in fade-in duration-200">
+              {/* Back navigation button */}
               <button
-                key={cat}
-                onClick={() => setReportFilter(cat)}
-                className={`text-xs px-3 py-1.5 rounded-full border transition-all whitespace-nowrap ${
-                  reportFilter === cat
-                    ? "bg-[#0f2340] text-white border-[#0f2340] font-bold shadow-sm"
-                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 font-medium"
-                }`}
+                onClick={() => setSelectedReport(null)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-200/90 hover:bg-slate-300 text-slate-800 text-xs font-bold tap-press transition-colors"
               >
-                {cat}
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>Back to All Reports</span>
               </button>
-            ))}
-          </div>
 
-          {/* Reports List */}
-          <div className="space-y-3">
-            {filteredReports.map(rep => (
-              <div
-                key={rep.id}
-                onClick={() => setSelectedReport(rep)}
-                className="rounded-2xl bg-white border border-slate-200 p-4 shadow-card-soft space-y-2.5 cursor-pointer hover:border-[#2f74b5] transition-colors"
-              >
-                <div className="flex items-start justify-between">
+              {/* Full Report Details Card */}
+              <div className="rounded-2xl bg-white border border-slate-200/90 p-4 shadow-card-soft space-y-4">
+                {/* Header */}
+                <div className="flex items-start justify-between border-b border-slate-100 pb-3">
                   <div>
-                    <span className="text-[10px] font-mono-specs font-bold uppercase text-slate-400">
-                      {rep.id} · {rep.date}
+                    <span className="text-[10px] font-mono-specs font-bold uppercase tracking-wider text-slate-500">
+                      Official Service Record · {selectedReport.id}
                     </span>
-                    <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rep.title}</h3>
+                    <h2 className="text-base font-bold text-slate-900 leading-tight mt-0.5">
+                      {selectedReport.title}
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-0.5">{selectedReport.date} · {selectedReport.technician}</p>
                   </div>
                   <Badge className="bg-[#2f74b5]/15 text-[#2f74b5] border-0 text-[10px] font-bold">
-                    {rep.jobType}
+                    {selectedReport.jobType}
                   </Badge>
                 </div>
 
-                <p className="text-xs text-slate-600 line-clamp-2">
-                  {rep.workPerformed.join(" · ")}
-                </p>
+                {/* Work Performed */}
+                <div className="space-y-1.5">
+                  <h4 className="text-xs font-mono-specs font-bold uppercase tracking-wider text-slate-600">
+                    Work Performed
+                  </h4>
+                  <ul className="space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    {selectedReport.workPerformed.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-2 leading-relaxed">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
-                  <span className="font-medium text-[#0f2340]">{rep.technician}</span>
-                  <span className="text-[#2f74b5] font-bold flex items-center gap-0.5">
-                    View Full Report <ChevronRight className="h-3 w-3" />
-                  </span>
+                {/* Equipment Installed */}
+                <div className="space-y-1.5">
+                  <h4 className="text-xs font-mono-specs font-bold uppercase tracking-wider text-slate-600">
+                    Installed Equipment
+                  </h4>
+                  <div className="space-y-2">
+                    {selectedReport.equipmentInstalled.map((eq, idx) => (
+                      <div key={idx} className="p-3 rounded-xl border border-slate-200 bg-white text-xs space-y-1 shadow-xs">
+                        <div className="flex justify-between font-bold text-slate-900">
+                          <span>{eq.item}</span>
+                          <span className="text-[#2f74b5]">{eq.brand} {eq.model}</span>
+                        </div>
+                        {eq.serial && <p className="text-[10px] font-mono-specs text-slate-500">S/N: {eq.serial}</p>}
+                        <p className="text-slate-600 text-[11px] leading-snug">{eq.specs}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Calibrated Readings */}
+                <div className="space-y-1.5">
+                  <h4 className="text-xs font-mono-specs font-bold uppercase tracking-wider text-slate-600">
+                    Pressure &amp; Chemistry Readings
+                  </h4>
+                  <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">Cut-In PSI</span>
+                      <span className="text-xs font-bold text-slate-800">{selectedReport.readings.cutInPsi || "40 PSI"}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">Cut-Out PSI</span>
+                      <span className="text-xs font-bold text-slate-800">{selectedReport.readings.cutOutPsi || "60 PSI"}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">Precharge</span>
+                      <span className="text-xs font-bold text-slate-800">{selectedReport.readings.tankPrechargePsi || "38 PSI"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Warranty Info */}
+                <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-950 leading-snug">
+                  <span className="font-bold text-emerald-900">Warranty Coverage: </span>
+                  {selectedReport.warrantyInfo}
+                </div>
+
+                {/* Actions */}
+                <div className="pt-2 flex flex-col gap-2">
+                  <Button
+                    onClick={() => alert(`Downloading official PDF service invoice for ${selectedReport.id}...`)}
+                    className="w-full h-11 rounded-xl bg-[#0f2340] hover:bg-[#1b3459] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <Download className="h-4 w-4" /> Download Official PDF Report
+                  </Button>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        alert("Equipment details synced to your Well Passport!")
+                        setSelectedReport(null)
+                      }}
+                      className="h-10 rounded-xl text-xs"
+                    >
+                      Sync to My Well
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        const item = selectedReport.equipmentInstalled[0]?.item || "Well System"
+                        setSelectedReport(null)
+                        if (onBookServiceForItem) onBookServiceForItem(item)
+                      }}
+                      className="h-10 rounded-xl text-xs bg-[#2f74b5]/10 text-[#2f74b5] border-[#2f74b5]/30 hover:bg-[#2f74b5]/20"
+                    >
+                      Book for Item
+                    </Button>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* REPORT DETAILS MODAL (Strictly inside mobile frame max-w-md) */}
-      {selectedReport && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center pointer-events-auto">
-          <div className="w-full max-w-md mx-auto max-h-[90vh] bg-white rounded-t-[28px] overflow-y-auto flex flex-col p-5 space-y-4 shadow-2xl border-t border-slate-200 animate-in slide-in-from-bottom duration-300">
-            {/* Header */}
-            <div className="flex items-start justify-between border-b border-slate-100 pb-3">
-              <div>
-                <span className="text-[10px] font-mono-specs font-bold uppercase tracking-wider text-slate-500">
-                  Official Service Record · {selectedReport.id}
-                </span>
-                <h2 className="text-base font-bold text-slate-900 leading-tight mt-0.5">
-                  {selectedReport.title}
-                </h2>
-                <p className="text-xs text-slate-500">{selectedReport.date} · {selectedReport.technician}</p>
+            </div>
+          ) : (
+            /* REPORTS LIST VIEW */
+            <>
+              {/* Search Bar */}
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Search past repairs, installed parts, or dates..."
+                  value={reportSearch}
+                  onChange={e => setReportSearch(e.target.value)}
+                  className="w-full text-xs pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2f74b5]"
+                />
               </div>
-              <button
-                onClick={() => setSelectedReport(null)}
-                className="p-1 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
 
-            {/* Work Performed */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-mono-specs font-bold uppercase tracking-wider text-slate-600">
-                Work Performed
-              </h4>
-              <ul className="space-y-1 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                {selectedReport.workPerformed.map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span>{item}</span>
-                  </li>
+              {/* Filter Chips */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                {["All", "Replace", "Repair", "Install", "Maintenance"].map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setReportFilter(cat)}
+                    className={`text-xs px-3 py-1.5 rounded-full border transition-all whitespace-nowrap ${
+                      reportFilter === cat
+                        ? "bg-[#0f2340] text-white border-[#0f2340] font-bold shadow-sm"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 font-medium"
+                    }`}
+                  >
+                    {cat}
+                  </button>
                 ))}
-              </ul>
-            </div>
+              </div>
 
-            {/* Equipment Installed */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-mono-specs font-bold uppercase tracking-wider text-slate-600">
-                Installed Equipment
-              </h4>
-              <div className="space-y-2">
-                {selectedReport.equipmentInstalled.map((eq, idx) => (
-                  <div key={idx} className="p-3 rounded-xl border border-slate-200 bg-white text-xs space-y-1">
-                    <div className="flex justify-between font-bold text-slate-900">
-                      <span>{eq.item}</span>
-                      <span className="text-[#2f74b5]">{eq.brand} {eq.model}</span>
+              {/* Reports List */}
+              <div className="space-y-3">
+                {filteredReports.map(rep => (
+                  <div
+                    key={rep.id}
+                    onClick={() => setSelectedReport(rep)}
+                    className="rounded-2xl bg-white border border-slate-200 p-4 shadow-card-soft space-y-2.5 cursor-pointer hover:border-[#2f74b5] transition-colors"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="text-[10px] font-mono-specs font-bold uppercase text-slate-400">
+                          {rep.id} · {rep.date}
+                        </span>
+                        <h3 className="text-sm font-bold text-slate-900 mt-0.5">{rep.title}</h3>
+                      </div>
+                      <Badge className="bg-[#2f74b5]/15 text-[#2f74b5] border-0 text-[10px] font-bold">
+                        {rep.jobType}
+                      </Badge>
                     </div>
-                    {eq.serial && <p className="text-[10px] font-mono-specs text-slate-500">S/N: {eq.serial}</p>}
-                    <p className="text-slate-600 text-[11px]">{eq.specs}</p>
+
+                    <p className="text-xs text-slate-600 line-clamp-2">
+                      {rep.workPerformed.join(" · ")}
+                    </p>
+
+                    <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                      <span className="font-medium text-[#0f2340]">{rep.technician}</span>
+                      <span className="text-[#2f74b5] font-bold flex items-center gap-0.5">
+                        View Full Report <ChevronRight className="h-3 w-3" />
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Calibrated Readings */}
-            <div className="space-y-1.5">
-              <h4 className="text-xs font-mono-specs font-bold uppercase tracking-wider text-slate-600">
-                Pressure &amp; Chemistry Readings
-              </h4>
-              <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                <div>
-                  <span className="text-[10px] text-slate-500 block">Cut-In PSI</span>
-                  <span className="text-xs font-bold text-slate-800">{selectedReport.readings.cutInPsi || "40 PSI"}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-500 block">Cut-Out PSI</span>
-                  <span className="text-xs font-bold text-slate-800">{selectedReport.readings.cutOutPsi || "60 PSI"}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-500 block">Precharge</span>
-                  <span className="text-xs font-bold text-slate-800">{selectedReport.readings.tankPrechargePsi || "38 PSI"}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Warranty Info */}
-            <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-950">
-              <span className="font-bold">Warranty Coverage: </span>
-              {selectedReport.warrantyInfo}
-            </div>
-
-            {/* Actions */}
-            <div className="pt-2 flex flex-col gap-2">
-              <Button
-                onClick={() => alert(`Downloading official PDF service invoice for ${selectedReport.id}...`)}
-                className="w-full h-11 rounded-xl bg-[#0f2340] hover:bg-[#1b3459] text-white text-xs font-bold flex items-center justify-center gap-2"
-              >
-                <Download className="h-4 w-4" /> Download Official PDF Report
-              </Button>
-
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    alert("Equipment details synced to your Well Passport!")
-                    setSelectedReport(null)
-                  }}
-                  className="flex-1 h-10 rounded-xl text-xs"
-                >
-                  Sync to My Well
-                </Button>
-
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    const item = selectedReport.equipmentInstalled[0]?.item || "Well System"
-                    setSelectedReport(null)
-                    if (onBookServiceForItem) onBookServiceForItem(item)
-                  }}
-                  className="flex-1 h-10 rounded-xl text-xs bg-[#2f74b5]/10 text-[#2f74b5] border-[#2f74b5]/30"
-                >
-                  Book Service for Item
-                </Button>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       )}
 
-      {/* SHUTOFF VALVE PHOTO MODAL (Strictly inside mobile frame max-w-md) */}
+      {/* SHUTOFF VALVE PHOTO MODAL (Strictly inside mobile frame) */}
       {isPhotoViewerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 pointer-events-auto">
-          <div className="bg-white rounded-2xl max-w-md w-full mx-auto p-4 space-y-3 shadow-2xl animate-in fade-in zoom-in-95">
+        <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 pointer-events-auto">
+          <div className="bg-white rounded-2xl max-w-sm w-full mx-auto p-4 space-y-3 shadow-2xl animate-in fade-in zoom-in-95">
             <div className="flex justify-between items-center">
               <h3 className="font-bold text-sm text-slate-900">Main Shut-Off Valve</h3>
               <button onClick={() => setIsPhotoViewerOpen(false)}>
